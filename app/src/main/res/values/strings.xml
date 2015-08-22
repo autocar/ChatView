@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Widget Chat</string>
     <string name="write_anything">Write anything</string>
+    <string name="img_description_speak_send_message">Speak/Send Message</string>
+    <string name="img_description_show_hide_emojicons">Show/Hide Emojicons</string>
 </resources>

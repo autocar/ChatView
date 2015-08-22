@@ -13,13 +13,13 @@ import android.support.v4.view.ViewCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.rockerhieu.emojicon.EmojiconEditText;
@@ -34,7 +34,6 @@ import br.com.nimesko.widgetchat.ui.emojicon.CustomEmojiconsFragment;
 
 public class ChatView extends RelativeLayout {
 
-    private LinearLayout containerChatView;
     private EmojiconEditText editTextMessage;
     private ImageButton imageButtonSendSpeakMessage;
     private ImageButton imageButtonShowEmoticon;
@@ -48,7 +47,7 @@ public class ChatView extends RelativeLayout {
     private boolean isKeyboardEmoticonShowed;
     private boolean isRecording;
     private int heigthView;
-    private int originalSize;
+    private Runnable runnable;
 
     private String pathLastAudio;
     private CustomEmojiconsFragment customEmojiconsFragment;
@@ -60,39 +59,38 @@ public class ChatView extends RelativeLayout {
 
     public ChatView(Context context) {
         super(context);
-        init(context, null);
+        init(context);
     }
 
     public ChatView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
+        init(context);
     }
 
     public ChatView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
+        init(context);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public ChatView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs);
+        init(context);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    private void init(Context context) {
         View.inflate(context, R.layout.view_chat, this);
         if(!isInEditMode()) {
-            containerKeyboard = (FrameLayout) findViewById(R.id.containerKeyboard);
-            containerImgBtnSendSpeak = (FrameLayout) findViewById(R.id.containerImgBtnSendSpeak);
-            containerEditTextKeyboardEmoticon = (FrameLayout) findViewById(R.id.containerEditTextKeyboardEmoticon);
-            containerChatView = (LinearLayout) findViewById(R.id.containerChatView);
-            editTextMessage = (EmojiconEditText) findViewById(R.id.edtMessage);
-            imageButtonSendSpeakMessage = (ImageButton) findViewById(R.id.imgBtnSendSpeak);
-            imageButtonShowEmoticon = (ImageButton) findViewById(R.id.imgBtnShowKeyboardOrEmoticon);
+            containerKeyboard = (FrameLayout) findViewById(R.id.container_keyboard);
+            containerImgBtnSendSpeak = (FrameLayout) findViewById(R.id.container_img_btn_send_speak);
+            containerEditTextKeyboardEmoticon = (FrameLayout) findViewById(R.id.container_edit_text_keyboard_emoticon);
+            editTextMessage = (EmojiconEditText) findViewById(R.id.edt_message);
+            imageButtonSendSpeakMessage = (ImageButton) findViewById(R.id.img_btn_send_speak);
+            imageButtonShowEmoticon = (ImageButton) findViewById(R.id.img_btn_show_keyboard_or_emoticon);
 
             setupEditTextMessage();
             setupImageButtonSendSpeakMessage();
-            setupImageButtonShowEmoticon(context);
+            setupImageButtonShowEmoticon();
 
             inputMethodManager = ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE));
 
@@ -103,22 +101,30 @@ public class ChatView extends RelativeLayout {
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             customEmojiconsFragment = new CustomEmojiconsFragment();
-            fragmentTransaction.add(R.id.containerKeyboard, customEmojiconsFragment);
+            fragmentTransaction.add(R.id.container_keyboard, customEmojiconsFragment);
             fragmentTransaction.hide(customEmojiconsFragment);
             fragmentTransaction.commit();
 
             heigthView = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 258, getResources().getDisplayMetrics());
-
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    while (editTextMessage.isInEditMode()) ;
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        Log.e("ChatView", "", e);
+                    } finally {
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.show(customEmojiconsFragment);
+                        fragmentTransaction.commit();
+                    }
+                }
+            };
         }
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        originalSize = getHeight();
-    }
-
-    private void setupImageButtonShowEmoticon(final Context context) {
+    private void setupImageButtonShowEmoticon() {
         imageButtonShowEmoticon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,21 +132,7 @@ public class ChatView extends RelativeLayout {
                     ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_keyboard);
                     inputMethodManager.hideSoftInputFromWindow(editTextMessage.getWindowToken(), 0);
                     containerKeyboard.getLayoutParams().height = heigthView;
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while(editTextMessage.isInEditMode());
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-
-                            } finally {
-                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                                fragmentTransaction.show(customEmojiconsFragment);
-                                fragmentTransaction.commit();
-                            }
-                        }
-                    });
+                    Thread thread = new Thread(runnable);
                     thread.start();
                     isKeyboardEmoticonShowed = true;
                 } else {
@@ -167,12 +159,12 @@ public class ChatView extends RelativeLayout {
                         mediaRecorder.reset();
                         mediaRecorder.release();
                         isRecording = false;
-                        if(onVoiceRecordListener != null) {
+                        if (onVoiceRecordListener != null) {
                             onVoiceRecordListener.afterRecord(pathLastAudio);
                         }
                     } else {
                         try {
-                            if(onVoiceRecordListener != null) {
+                            if (onVoiceRecordListener != null) {
                                 onVoiceRecordListener.beforeRecord();
                             }
                             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -191,7 +183,7 @@ public class ChatView extends RelativeLayout {
                         }
                     }
                 } else {
-                    if(onSendTextListener != null) {
+                    if (onSendTextListener != null) {
                         onSendTextListener.sendText(editTextMessage.getText().toString());
                     }
                     editTextMessage.setText("");
@@ -227,7 +219,7 @@ public class ChatView extends RelativeLayout {
         editTextMessage.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isKeyboardEmoticonShowed) {
+                if (isKeyboardEmoticonShowed) {
                     isKeyboardEmoticonShowed = false;
                     ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_emoticon);
                     fragmentManager.beginTransaction().hide(customEmojiconsFragment).commit();
@@ -237,18 +229,6 @@ public class ChatView extends RelativeLayout {
                 }
             }
         });
-    }
-
-    public boolean onBackPressed() {
-        if(isKeyboardEmoticonShowed) {
-            fragmentManager.beginTransaction().hide(customEmojiconsFragment).commit();
-            containerKeyboard.getLayoutParams().height = 0;
-            ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_emoticon);
-            isKeyboardEmoticonShowed = false;
-            return false;
-        } else {
-            return true;
-        }
     }
 
     public void handleEmojiconClicked(Emojicon emojicon) {
@@ -268,13 +248,19 @@ public class ChatView extends RelativeLayout {
     @Override
     public boolean dispatchKeyEventPreIme(@NonNull KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            containerKeyboard.getLayoutParams().height = 0;
+            if (isKeyboardEmoticonShowed) {
+                fragmentManager.beginTransaction().hide(customEmojiconsFragment).commit();
+                containerKeyboard.getLayoutParams().height = 0;
+                ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_emoticon);
+                isKeyboardEmoticonShowed = false;
+                return true;
+            } else {
+                containerKeyboard.getLayoutParams().height = 0;
+                return super.dispatchKeyEventPreIme(event);
+            }
+        } else {
+            return super.dispatchKeyEventPreIme(event);
         }
-        return super.dispatchKeyEventPreIme(event);
-    }
-
-    public OnVoiceRecordListener getOnVoiceRecordListener() {
-        return onVoiceRecordListener;
     }
 
     public void setOnVoiceRecordListener(OnVoiceRecordListener onVoiceRecordListener) {
@@ -285,22 +271,13 @@ public class ChatView extends RelativeLayout {
         this.onSendTextListener = onSendTextListener;
     }
 
-    public OnSendTextListener getOnSendTextListener() {
-        return onSendTextListener;
-    }
-
     public interface OnVoiceRecordListener {
-
         void beforeRecord();
-
         void afterRecord(String pathLastAudio);
-
     }
 
     public interface OnSendTextListener {
-
         void sendText(String text);
-
     }
 
 }

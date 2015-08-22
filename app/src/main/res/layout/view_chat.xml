@@ -1,74 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/containerChatView"
-    android:orientation="vertical"
+    android:id="@+id/container_chat_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp">
+    android:layout_marginTop="4dp"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/containerMessage"
+        android:id="@+id/container_message"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="6dp">
 
         <FrameLayout
+            android:id="@+id/container_edit_text_keyboard_emoticon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@drawable/background_message_to_send"
-            android:id="@+id/containerEditTextKeyboardEmoticon"
-            android:layout_alignParentTop="true"
+            android:layout_alignBottom="@+id/container_img_btn_send_speak"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/containerImgBtnSendSpeak"
-            android:layout_toStartOf="@+id/containerImgBtnSendSpeak"
-            android:layout_alignBottom="@+id/containerImgBtnSendSpeak">
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/container_img_btn_send_speak"
+            android:layout_toStartOf="@+id/container_img_btn_send_speak"
+            android:background="@drawable/background_message_to_send">
 
             <com.rockerhieu.emojicon.EmojiconEditText
-                android:background="@null"
+                android:id="@+id/edt_message"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/edtMessage"
-                android:inputType="textMultiLine"
+                android:layout_marginLeft="40dp"
+                android:background="@null"
                 android:hint="@string/write_anything"
-                android:layout_marginLeft="40dp"/>
+                android:inputType="textMultiLine" />
 
             <ImageButton
-                android:id="@+id/imgBtnShowKeyboardOrEmoticon"
-                android:src="@drawable/ic_emoticon"
-                android:background="@android:color/transparent"
+                android:id="@+id/img_btn_show_keyboard_or_emoticon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|start"/>
+                android:layout_gravity="center_vertical|start"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/img_description_show_hide_emojicons"
+                android:src="@drawable/ic_emoticon" />
 
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/containerImgBtnSendSpeak"
-            android:background="@drawable/background_send_speak_button_default"
+            android:id="@+id/container_img_btn_send_speak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:layout_marginBottom="12dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="6dp">
+            android:layout_marginRight="6dp"
+            android:background="@drawable/background_send_speak_button_default">
 
             <ImageButton
-                android:id="@+id/imgBtnSendSpeak"
-                android:src="@drawable/ic_microphone"
-                android:background="@null"
+                android:id="@+id/img_btn_send_speak"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/img_description_speak_send_message"
+                android:src="@drawable/ic_microphone" />
 
         </FrameLayout>
 
     </RelativeLayout>
 
     <FrameLayout
-        android:id="@+id/containerKeyboard"
+        android:id="@+id/container_keyboard"
         android:layout_width="match_parent"
         android:layout_height="0dp">
 

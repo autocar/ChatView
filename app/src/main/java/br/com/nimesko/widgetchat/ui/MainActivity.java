@@ -38,13 +38,6 @@ public class MainActivity extends AppCompatActivity implements CustomEmojiconsFr
     }
 
     @Override
-    public void onBackPressed() {
-        if(chatView.onBackPressed()) {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public void sendText(String text) {
         textView.setText(textView.getText() + "\n" + text);
     }
