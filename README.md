@@ -10,7 +10,7 @@ This is a library and a sample project that uses the widget that looks like What
 
 After added the view in your layout file, you need to implement 3 pieces of code to work property.
 
-<b>Overriding the onBackPressed to handle events when the back button is pressed
+<b>Overriding the onBackPressed to handle events when the back button is pressed</b>
 ```java
 ...
     @Override
