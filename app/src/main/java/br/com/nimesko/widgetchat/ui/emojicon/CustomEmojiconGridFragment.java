@@ -17,11 +17,11 @@ import java.util.Arrays;
 
 public class CustomEmojiconGridFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    private static final String USE_SYSTEM_DEFAULT_KEY = "useSystemDefaults";
     private CustomEmojiconGridFragment.OnEmojiconClickedListener mOnEmojiconClickedListener;
     private EmojiconRecents mRecents;
     private Emojicon[] mData;
     private boolean mUseSystemDefault = false;
-    private static final String USE_SYSTEM_DEFAULT_KEY = "useSystemDefaults";
 
     public static CustomEmojiconGridFragment newInstance(Emojicon[] emojicons, EmojiconRecents recents) {
         return newInstance(emojicons, recents, false);
@@ -51,7 +51,7 @@ public class CustomEmojiconGridFragment extends Fragment implements AdapterView.
             this.mUseSystemDefault = false;
         } else {
             Object[] o = (Object[])(this.getArguments().getSerializable("emojicons"));
-            this.mData = (Emojicon[]) Arrays.asList(o).toArray(new Emojicon[o.length]);
+            this.mData = Arrays.asList(o).toArray(new Emojicon[o.length]);
             this.mUseSystemDefault = bundle.getBoolean("useSystemDefaults");
         }
 

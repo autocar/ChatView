@@ -218,15 +218,13 @@ public class ChatView extends RelativeLayout {
         });
         editTextMessage.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 if (isKeyboardEmoticonShowed) {
                     isKeyboardEmoticonShowed = false;
                     ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_emoticon);
                     fragmentManager.beginTransaction().hide(customEmojiconsFragment).commit();
-                    containerKeyboard.getLayoutParams().height = heigthView;
-                } else {
-                    containerKeyboard.getLayoutParams().height = heigthView;
                 }
+                containerKeyboard.getLayoutParams().height = heigthView;
             }
         });
     }

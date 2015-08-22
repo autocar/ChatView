@@ -19,24 +19,22 @@ public class ChatViewApplication extends Application {
 
     private static List<CustomEmojiconGridFragment> customEmojiconGridFragments;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
     public static List<CustomEmojiconGridFragment> loadListEmojiconGridFragment(EmojiconRecents emojiconRecents) {
         if(customEmojiconGridFragments == null) {
             customEmojiconGridFragments = Arrays.asList(
-                    new CustomEmojiconGridFragment[]{
-                            CustomEmojiconRecentsGridFragment.newInstance(false),
-                            CustomEmojiconGridFragment.newInstance(People.DATA, emojiconRecents, false),
-                            CustomEmojiconGridFragment.newInstance(Nature.DATA, emojiconRecents, false),
-                            CustomEmojiconGridFragment.newInstance(Objects.DATA, emojiconRecents, false),
-                            CustomEmojiconGridFragment.newInstance(Places.DATA, emojiconRecents, false),
-                            CustomEmojiconGridFragment.newInstance(Symbols.DATA, emojiconRecents, false)
-                    });
+                    CustomEmojiconRecentsGridFragment.newInstance(false),
+                    CustomEmojiconGridFragment.newInstance(People.DATA, emojiconRecents, false),
+                    CustomEmojiconGridFragment.newInstance(Nature.DATA, emojiconRecents, false),
+                    CustomEmojiconGridFragment.newInstance(Objects.DATA, emojiconRecents, false),
+                    CustomEmojiconGridFragment.newInstance(Places.DATA, emojiconRecents, false),
+                    CustomEmojiconGridFragment.newInstance(Symbols.DATA, emojiconRecents, false));
         }
         return customEmojiconGridFragments;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
     }
 
 }
