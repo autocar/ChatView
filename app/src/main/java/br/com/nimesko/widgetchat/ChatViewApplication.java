@@ -22,12 +22,13 @@ public class ChatViewApplication extends Application {
     public static List<CustomEmojiconGridFragment> loadListEmojiconGridFragment(EmojiconRecents emojiconRecents) {
         if(customEmojiconGridFragments == null) {
             customEmojiconGridFragments = Arrays.asList(
-                    CustomEmojiconRecentsGridFragment.newInstance(false),
-                    CustomEmojiconGridFragment.newInstance(People.DATA, emojiconRecents, false),
-                    CustomEmojiconGridFragment.newInstance(Nature.DATA, emojiconRecents, false),
-                    CustomEmojiconGridFragment.newInstance(Objects.DATA, emojiconRecents, false),
-                    CustomEmojiconGridFragment.newInstance(Places.DATA, emojiconRecents, false),
-                    CustomEmojiconGridFragment.newInstance(Symbols.DATA, emojiconRecents, false));
+                    new CustomEmojiconRecentsGridFragment(),
+                    CustomEmojiconGridFragment.newInstance(People.DATA, emojiconRecents),
+                    CustomEmojiconGridFragment.newInstance(Nature.DATA, emojiconRecents),
+                    CustomEmojiconGridFragment.newInstance(Objects.DATA, emojiconRecents),
+                    CustomEmojiconGridFragment.newInstance(Places.DATA, emojiconRecents),
+                    CustomEmojiconGridFragment.newInstance(Symbols.DATA, emojiconRecents)
+            );
         }
         return customEmojiconGridFragments;
     }

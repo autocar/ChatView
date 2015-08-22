@@ -26,13 +26,13 @@ import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.emoji.Emojicon;
 
 import java.io.IOException;
-import java.util.Stack;
 
 import br.com.nimesko.widgetchat.R;
 import br.com.nimesko.widgetchat.animation.types.ImageAnimation;
+import br.com.nimesko.widgetchat.ui.emojicon.CustomEmojiconGridFragment;
 import br.com.nimesko.widgetchat.ui.emojicon.CustomEmojiconsFragment;
 
-public class ChatView extends RelativeLayout {
+public class ChatView extends RelativeLayout implements CustomEmojiconsFragment.OnEmojiconBackspaceClickedListener, CustomEmojiconGridFragment.OnEmojiconClickedListener {
 
     private EmojiconEditText editTextMessage;
     private ImageButton imageButtonSendSpeakMessage;
@@ -51,8 +51,6 @@ public class ChatView extends RelativeLayout {
 
     private String pathLastAudio;
     private CustomEmojiconsFragment customEmojiconsFragment;
-    private Stack<String> stateText;
-    private Stack<Integer> stateSelection;
 
     private OnVoiceRecordListener onVoiceRecordListener;
     private OnSendTextListener onSendTextListener;
@@ -95,12 +93,12 @@ public class ChatView extends RelativeLayout {
             inputMethodManager = ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE));
 
             mediaRecorder = new MediaRecorder();
-            stateText = new Stack<>();
-            stateSelection = new Stack<>();
             fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             customEmojiconsFragment = new CustomEmojiconsFragment();
+            customEmojiconsFragment.setOnEmojiconBackspaceClickedListener(this);
+            customEmojiconsFragment.setOnEmojiconClickedListener(this);
             fragmentTransaction.add(R.id.container_keyboard, customEmojiconsFragment);
             fragmentTransaction.hide(customEmojiconsFragment);
             fragmentTransaction.commit();
@@ -132,8 +130,7 @@ public class ChatView extends RelativeLayout {
                     ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_keyboard);
                     inputMethodManager.hideSoftInputFromWindow(editTextMessage.getWindowToken(), 0);
                     containerKeyboard.getLayoutParams().height = heigthView;
-                    Thread thread = new Thread(runnable);
-                    thread.start();
+                    new Thread(runnable).start();
                     isKeyboardEmoticonShowed = true;
                 } else {
                     ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_emoticon);
@@ -229,20 +226,6 @@ public class ChatView extends RelativeLayout {
         });
     }
 
-    public void handleEmojiconClicked(Emojicon emojicon) {
-        stateText.push(editTextMessage.getText().toString());
-        stateSelection.push(editTextMessage.getSelectionEnd());
-        editTextMessage.setText(editTextMessage.getText() + emojicon.getEmoji());
-        editTextMessage.setSelection(editTextMessage.getText().toString().length() - 1);
-    }
-
-    public void handleEmojiconBackspace() {
-        if(!stateText.isEmpty()) {
-            editTextMessage.setText(stateText.pop());
-            editTextMessage.setSelection(stateSelection.pop());
-        }
-    }
-
     @Override
     public boolean dispatchKeyEventPreIme(@NonNull KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
@@ -267,6 +250,17 @@ public class ChatView extends RelativeLayout {
 
     public void setOnSendTextListener(OnSendTextListener onSendTextListener) {
         this.onSendTextListener = onSendTextListener;
+    }
+
+    @Override
+    public void onEmojiconBackspaceClicked(View var1) {
+
+    }
+
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+        editTextMessage.setText(editTextMessage.getText() + emojicon.getEmoji());
+        editTextMessage.setSelection(editTextMessage.getText().toString().length() - 1);
     }
 
     public interface OnVoiceRecordListener {

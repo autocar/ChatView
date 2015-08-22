@@ -12,26 +12,20 @@ import java.util.List;
 
 public class CustomEmojiAdapter extends ArrayAdapter<Emojicon> {
 
-    private boolean mUseSystemDefault = false;
-
     public CustomEmojiAdapter(Context context, List<Emojicon> data) {
         super(context, com.rockerhieu.emojicon.R.layout.emojicon_item, data);
-        this.mUseSystemDefault = false;
     }
 
     public CustomEmojiAdapter(Context context, List<Emojicon> data, boolean useSystemDefault) {
         super(context, com.rockerhieu.emojicon.R.layout.emojicon_item, data);
-        this.mUseSystemDefault = useSystemDefault;
     }
 
     public CustomEmojiAdapter(Context context, Emojicon[] data) {
         super(context, com.rockerhieu.emojicon.R.layout.emojicon_item, data);
-        this.mUseSystemDefault = false;
     }
 
     public CustomEmojiAdapter(Context context, Emojicon[] data, boolean useSystemDefault) {
         super(context, com.rockerhieu.emojicon.R.layout.emojicon_item, data);
-        this.mUseSystemDefault = useSystemDefault;
     }
 
     @Override
@@ -40,14 +34,14 @@ public class CustomEmojiAdapter extends ArrayAdapter<Emojicon> {
         View v = convertView;
 
         if(convertView == null) {
-            v = View.inflate(this.getContext(), com.rockerhieu.emojicon.R.layout.emojicon_item, null);
+            v = View.inflate(getContext(), com.rockerhieu.emojicon.R.layout.emojicon_item, null);
             CustomEmojiAdapter.ViewHolder emoji = new CustomEmojiAdapter.ViewHolder();
             emoji.icon = (EmojiconTextView) v.findViewById(com.rockerhieu.emojicon.R.id.emojicon_icon);
-            emoji.icon.setUseSystemDefault(this.mUseSystemDefault);
+            emoji.icon.setUseSystemDefault(false);
             v.setTag(emoji);
         }
 
-        Emojicon emoji1 = this.getItem(position);
+        Emojicon emoji1 = getItem(position);
         CustomEmojiAdapter.ViewHolder holder = (CustomEmojiAdapter.ViewHolder)v.getTag();
         holder.icon.setText(emoji1.getEmoji());
 
@@ -55,12 +49,7 @@ public class CustomEmojiAdapter extends ArrayAdapter<Emojicon> {
     }
 
     private static class ViewHolder {
-
         private EmojiconTextView icon;
-
-        public ViewHolder() {
-
-        }
     }
 
 }

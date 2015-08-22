@@ -1,6 +1,5 @@
 package br.com.nimesko.widgetchat.ui.emojicon;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,21 +16,14 @@ import java.util.Arrays;
 
 public class CustomEmojiconGridFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String USE_SYSTEM_DEFAULT_KEY = "useSystemDefaults";
-    private CustomEmojiconGridFragment.OnEmojiconClickedListener mOnEmojiconClickedListener;
+    private CustomEmojiconGridFragment.OnEmojiconClickedListener onEmojiconClickedListener;
     private EmojiconRecents mRecents;
     private Emojicon[] mData;
-    private boolean mUseSystemDefault = false;
 
     public static CustomEmojiconGridFragment newInstance(Emojicon[] emojicons, EmojiconRecents recents) {
-        return newInstance(emojicons, recents, false);
-    }
-
-    public static CustomEmojiconGridFragment newInstance(Emojicon[] emojicons, EmojiconRecents recents, boolean useSystemDefault) {
         CustomEmojiconGridFragment emojiGridFragment = new CustomEmojiconGridFragment();
         Bundle args = new Bundle();
         args.putSerializable("emojicons", emojicons);
-        args.putBoolean(USE_SYSTEM_DEFAULT_KEY, useSystemDefault);
         emojiGridFragment.setArguments(args);
         emojiGridFragment.setRecents(recents);
         return emojiGridFragment;
@@ -45,17 +37,14 @@ public class CustomEmojiconGridFragment extends Fragment implements AdapterView.
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         GridView gridView = (GridView)view.findViewById(com.rockerhieu.emojicon.R.id.Emoji_GridView);
-        Bundle bundle = this.getArguments();
+        Bundle bundle = getArguments();
         if(bundle == null) {
             this.mData = People.DATA;
-            this.mUseSystemDefault = false;
         } else {
-            Object[] o = (Object[])(this.getArguments().getSerializable("emojicons"));
+            Object[] o = (Object[]) (bundle.getSerializable("emojicons"));
             this.mData = Arrays.asList(o).toArray(new Emojicon[o.length]);
-            this.mUseSystemDefault = bundle.getBoolean("useSystemDefaults");
         }
-
-        gridView.setAdapter(new CustomEmojiAdapter(view.getContext(), this.mData, this.mUseSystemDefault));
+        gridView.setAdapter(new CustomEmojiAdapter(view.getContext(), this.mData));
         gridView.setOnItemClickListener(this);
     }
 
@@ -66,28 +55,15 @@ public class CustomEmojiconGridFragment extends Fragment implements AdapterView.
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if(activity instanceof CustomEmojiconGridFragment.OnEmojiconClickedListener) {
-            this.mOnEmojiconClickedListener = (CustomEmojiconGridFragment.OnEmojiconClickedListener)activity;
-        } else {
-            if(!(this.getParentFragment() instanceof CustomEmojiconGridFragment.OnEmojiconClickedListener)) {
-                throw new IllegalArgumentException(activity + " must implement interface " + CustomEmojiconGridFragment.OnEmojiconClickedListener.class.getSimpleName());
-            }
-            this.mOnEmojiconClickedListener = (CustomEmojiconGridFragment.OnEmojiconClickedListener)this.getParentFragment();
-        }
-    }
-
-    @Override
     public void onDetach() {
-        this.mOnEmojiconClickedListener = null;
+        this.onEmojiconClickedListener = null;
         super.onDetach();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(this.mOnEmojiconClickedListener != null) {
-            this.mOnEmojiconClickedListener.onEmojiconClicked((Emojicon)parent.getItemAtPosition(position));
+        if (this.onEmojiconClickedListener != null) {
+            this.onEmojiconClickedListener.onEmojiconClicked((Emojicon) parent.getItemAtPosition(position));
         }
         if(this.mRecents != null) {
             this.mRecents.addRecentEmoji(view.getContext(), (Emojicon)parent.getItemAtPosition(position));
@@ -96,6 +72,10 @@ public class CustomEmojiconGridFragment extends Fragment implements AdapterView.
 
     private void setRecents(EmojiconRecents recents) {
         this.mRecents = recents;
+    }
+
+    public void setOnEmojiconClickedListener(OnEmojiconClickedListener onEmojiconClickedListener) {
+        this.onEmojiconClickedListener = onEmojiconClickedListener;
     }
 
     public interface OnEmojiconClickedListener {
