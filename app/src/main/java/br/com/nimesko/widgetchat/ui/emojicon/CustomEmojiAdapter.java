@@ -16,15 +16,7 @@ public class CustomEmojiAdapter extends ArrayAdapter<Emojicon> {
         super(context, com.rockerhieu.emojicon.R.layout.emojicon_item, data);
     }
 
-    public CustomEmojiAdapter(Context context, List<Emojicon> data, boolean useSystemDefault) {
-        super(context, com.rockerhieu.emojicon.R.layout.emojicon_item, data);
-    }
-
     public CustomEmojiAdapter(Context context, Emojicon[] data) {
-        super(context, com.rockerhieu.emojicon.R.layout.emojicon_item, data);
-    }
-
-    public CustomEmojiAdapter(Context context, Emojicon[] data, boolean useSystemDefault) {
         super(context, com.rockerhieu.emojicon.R.layout.emojicon_item, data);
     }
 

@@ -16,7 +16,7 @@ public class CustomEmojiconRecentsGridFragment extends CustomEmojiconGridFragmen
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         EmojiconRecentsManager recents = EmojiconRecentsManager.getInstance(view.getContext());
-        this.customEmojiAdapter = new CustomEmojiAdapter(view.getContext(), recents, false);
+        this.customEmojiAdapter = new CustomEmojiAdapter(view.getContext(), recents);
         GridView gridView = (GridView)view.findViewById(com.rockerhieu.emojicon.R.id.Emoji_GridView);
         gridView.setAdapter(this.customEmojiAdapter);
         gridView.setOnItemClickListener(this);

@@ -1,9 +1,7 @@
 package br.com.nimesko.widgetchat.ui.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -70,12 +68,6 @@ public class ChatView extends RelativeLayout implements CustomEmojiconsFragment.
         init(context);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ChatView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
     private void init(Context context) {
         View.inflate(context, R.layout.view_chat, this);
         if(!isInEditMode()) {
@@ -107,7 +99,6 @@ public class ChatView extends RelativeLayout implements CustomEmojiconsFragment.
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    while (editTextMessage.isInEditMode()) ;
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
