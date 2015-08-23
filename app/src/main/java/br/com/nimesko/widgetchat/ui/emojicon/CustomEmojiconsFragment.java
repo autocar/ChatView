@@ -96,8 +96,7 @@ public class CustomEmojiconsFragment extends Fragment implements ViewPager.OnPag
     @Override
     public void addRecentEmoji(Context context, Emojicon emojicon) {
         ViewPager emojisPager = (ViewPager) getView().findViewById(com.rockerhieu.emojicon.R.id.emojis_pager);
-        CustomEmojiconRecentsGridFragment fragment = (CustomEmojiconRecentsGridFragment)this.mEmojisAdapter.instantiateItem
-                (emojisPager, 0);
+        CustomEmojiconRecentsGridFragment fragment = (CustomEmojiconRecentsGridFragment) mEmojisAdapter.instantiateItem(emojisPager, 0);
         fragment.addRecentEmoji(context, emojicon);
     }
 
@@ -152,24 +151,24 @@ public class CustomEmojiconsFragment extends Fragment implements ViewPager.OnPag
 
         public RepeatListener(int initialInterval, int normalInterval, View.OnClickListener clickListener) {
             if(clickListener == null) {
-                throw new IllegalArgumentException("null runnable");
+                throw new IllegalArgumentException("Click Listener is null!");
             } else if(initialInterval >= 0 && normalInterval >= 0) {
                 this.initialInterval = initialInterval;
                 this.normalInterval = normalInterval;
                 this.clickListener = clickListener;
-            } else {
-                throw new IllegalArgumentException("negative interval");
-            }
-            handler = new Handler();
-            handlerRunnable = new Runnable() {
-                public void run() {
-                    if(RepeatListener.this.downView != null) {
-                        RepeatListener.this.handler.removeCallbacksAndMessages(RepeatListener.this.downView);
-                        RepeatListener.this.handler.postAtTime(this, RepeatListener.this.downView, SystemClock.uptimeMillis() + (long)RepeatListener.this.normalInterval);
-                        RepeatListener.this.clickListener.onClick(RepeatListener.this.downView);
+                handler = new Handler();
+                handlerRunnable = new Runnable() {
+                    public void run() {
+                        if (RepeatListener.this.downView != null) {
+                            RepeatListener.this.handler.removeCallbacksAndMessages(RepeatListener.this.downView);
+                            RepeatListener.this.handler.postAtTime(this, RepeatListener.this.downView, SystemClock.uptimeMillis() + (long) RepeatListener.this.normalInterval);
+                            RepeatListener.this.clickListener.onClick(RepeatListener.this.downView);
+                        }
                     }
-                }
-            };
+                };
+            } else {
+                throw new IllegalArgumentException("Negative interval!");
+            }
         }
 
         @Override
@@ -199,15 +198,15 @@ public class CustomEmojiconsFragment extends Fragment implements ViewPager.OnPag
         private List<CustomEmojiconGridFragment> fragments;
         private CustomEmojiconGridFragment.OnEmojiconClickedListener onEmojiconClickedListener;
 
-        public EmojisPagerAdapter(FragmentManager fm, List<CustomEmojiconGridFragment> fragments, CustomEmojiconGridFragment.OnEmojiconClickedListener onEmojiconClickedListener) {
-            super(fm);
+        public EmojisPagerAdapter(FragmentManager fragmentManager, List<CustomEmojiconGridFragment> fragments, CustomEmojiconGridFragment.OnEmojiconClickedListener onEmojiconClickedListener) {
+            super(fragmentManager);
             this.fragments = fragments;
             this.onEmojiconClickedListener = onEmojiconClickedListener;
         }
 
         @Override
-        public Fragment getItem(int i) {
-            CustomEmojiconGridFragment customEmojiconGridFragment = this.fragments.get(i);
+        public Fragment getItem(int position) {
+            CustomEmojiconGridFragment customEmojiconGridFragment = this.fragments.get(position);
             customEmojiconGridFragment.setOnEmojiconClickedListener(onEmojiconClickedListener);
             return customEmojiconGridFragment;
         }

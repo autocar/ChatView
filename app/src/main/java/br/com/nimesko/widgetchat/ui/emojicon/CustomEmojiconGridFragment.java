@@ -12,13 +12,11 @@ import com.rockerhieu.emojicon.EmojiconRecents;
 import com.rockerhieu.emojicon.emoji.Emojicon;
 import com.rockerhieu.emojicon.emoji.People;
 
-import java.util.Arrays;
-
 public class CustomEmojiconGridFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private CustomEmojiconGridFragment.OnEmojiconClickedListener onEmojiconClickedListener;
-    private EmojiconRecents mRecents;
-    private Emojicon[] mData;
+    private EmojiconRecents emojiconRecents;
+    private Emojicon[] emojicons;
 
     public static CustomEmojiconGridFragment newInstance(Emojicon[] emojicons, EmojiconRecents recents) {
         CustomEmojiconGridFragment emojiGridFragment = new CustomEmojiconGridFragment();
@@ -39,19 +37,19 @@ public class CustomEmojiconGridFragment extends Fragment implements AdapterView.
         GridView gridView = (GridView)view.findViewById(com.rockerhieu.emojicon.R.id.Emoji_GridView);
         Bundle bundle = getArguments();
         if(bundle == null) {
-            this.mData = People.DATA;
+            this.emojicons = People.DATA;
         } else {
             Object[] o = (Object[]) (bundle.getSerializable("emojicons"));
-            this.mData = Arrays.asList(o).toArray(new Emojicon[o.length]);
+            this.emojicons = (Emojicon[]) o;
         }
-        gridView.setAdapter(new CustomEmojiAdapter(view.getContext(), this.mData));
+        gridView.setAdapter(new CustomEmojiAdapter(view.getContext(), this.emojicons));
         gridView.setOnItemClickListener(this);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("emojicons", this.mData);
+        outState.putSerializable("emojicons", this.emojicons);
     }
 
     @Override
@@ -65,13 +63,13 @@ public class CustomEmojiconGridFragment extends Fragment implements AdapterView.
         if (this.onEmojiconClickedListener != null) {
             this.onEmojiconClickedListener.onEmojiconClicked((Emojicon) parent.getItemAtPosition(position));
         }
-        if(this.mRecents != null) {
-            this.mRecents.addRecentEmoji(view.getContext(), (Emojicon)parent.getItemAtPosition(position));
+        if (this.emojiconRecents != null) {
+            this.emojiconRecents.addRecentEmoji(view.getContext(), (Emojicon) parent.getItemAtPosition(position));
         }
     }
 
     private void setRecents(EmojiconRecents recents) {
-        this.mRecents = recents;
+        this.emojiconRecents = recents;
     }
 
     public void setOnEmojiconClickedListener(OnEmojiconClickedListener onEmojiconClickedListener) {
