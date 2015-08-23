@@ -42,10 +42,10 @@ public class ChatView extends RelativeLayout implements CustomEmojiconsFragment.
     private MediaRecorder mediaRecorder;
     private InputMethodManager inputMethodManager;
     private FragmentManager fragmentManager;
+    private Runnable runnable;
     private boolean isKeyboardEmoticonShowed;
     private boolean isRecording;
     private int heigthView;
-    private Runnable runnable;
 
     private String pathLastAudio;
     private CustomEmojiconsFragment customEmojiconsFragment;
@@ -66,6 +66,44 @@ public class ChatView extends RelativeLayout implements CustomEmojiconsFragment.
     public ChatView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
+    }
+
+    @Override
+    public boolean dispatchKeyEventPreIme(@NonNull KeyEvent event) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            if (isKeyboardEmoticonShowed) {
+                fragmentManager.beginTransaction().hide(customEmojiconsFragment).commit();
+                containerKeyboard.getLayoutParams().height = 0;
+                ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_emoticon);
+                isKeyboardEmoticonShowed = false;
+                return true;
+            } else {
+                containerKeyboard.getLayoutParams().height = 0;
+                return super.dispatchKeyEventPreIme(event);
+            }
+        } else {
+            return super.dispatchKeyEventPreIme(event);
+        }
+    }
+
+    @Override
+    public void onEmojiconBackspaceClicked(View view) {
+        if (!"".equals(editTextMessage.getText().toString())) {
+            char[] text = editTextMessage.getText().toString().toCharArray();
+            if (text[text.length - 1] > 1000 && text[text.length - 2] > 1000) {
+                editTextMessage.setText(editTextMessage.getText().toString().substring(0, text.length - 2));
+                editTextMessage.setSelection(text.length - 2);
+            } else {
+                editTextMessage.setText(editTextMessage.getText().toString().substring(0, text.length - 1));
+                editTextMessage.setSelection(text.length - 1);
+            }
+        }
+    }
+
+    @Override
+    public void onEmojiconClicked(Emojicon emojicon) {
+        editTextMessage.setText(editTextMessage.getText() + emojicon.getEmoji());
+        editTextMessage.setSelection(editTextMessage.getText().toString().length() - 1);
     }
 
     private void init(Context context) {
@@ -217,41 +255,12 @@ public class ChatView extends RelativeLayout implements CustomEmojiconsFragment.
         });
     }
 
-    @Override
-    public boolean dispatchKeyEventPreIme(@NonNull KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            if (isKeyboardEmoticonShowed) {
-                fragmentManager.beginTransaction().hide(customEmojiconsFragment).commit();
-                containerKeyboard.getLayoutParams().height = 0;
-                ImageAnimation.imageAnimation(imageButtonShowEmoticon, R.drawable.ic_emoticon);
-                isKeyboardEmoticonShowed = false;
-                return true;
-            } else {
-                containerKeyboard.getLayoutParams().height = 0;
-                return super.dispatchKeyEventPreIme(event);
-            }
-        } else {
-            return super.dispatchKeyEventPreIme(event);
-        }
-    }
-
     public void setOnVoiceRecordListener(OnVoiceRecordListener onVoiceRecordListener) {
         this.onVoiceRecordListener = onVoiceRecordListener;
     }
 
     public void setOnSendTextListener(OnSendTextListener onSendTextListener) {
         this.onSendTextListener = onSendTextListener;
-    }
-
-    @Override
-    public void onEmojiconBackspaceClicked(View var1) {
-
-    }
-
-    @Override
-    public void onEmojiconClicked(Emojicon emojicon) {
-        editTextMessage.setText(editTextMessage.getText() + emojicon.getEmoji());
-        editTextMessage.setSelection(editTextMessage.getText().toString().length() - 1);
     }
 
     public interface OnVoiceRecordListener {
